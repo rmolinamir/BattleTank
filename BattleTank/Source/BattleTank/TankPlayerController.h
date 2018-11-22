@@ -18,22 +18,18 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	/// Pair of float specifying the pixel coordinates that will be used to de-project
+	UPROPERTY(EditAnywhere)
+	float CrossHairXLocation = .5;
+	UPROPERTY(EditAnywhere)
+	float CrossHairYLocation = 0.3333;
+
 	ATank* GetControlledTank() const;
-
-
-	// Start the tank moving the barrel so that a shot would hit
-	// where the crosshair intersects the world
 
 	float Reach = 1000000.0f;
 
-	UPROPERTY(EditAnywhere)
-	FVector PlayerViewPointLocation;
-
-	UPROPERTY(EditAnywhere)
-	FRotator PlayerViewPointRotator;
-
-	const void GetPlayerControllerVectors(FVector &PlayerViewPointLocation, FRotator &PlayerViewPointRotation);
-
-	bool GetSightRayHitLocation(FVector&, FVector, FRotator) const;
+	bool GetSightRayHitLocation(FVector&) const;
+	bool GetLookVectorHitLocation(FVector &CameraWorldDirection, FVector & HitLocation) const;
+	bool GetLookDirection(FVector2D &ScreenLocation, FVector &CameraWorldDirection) const;
 	void AimTowardsCrosshair();
 };
