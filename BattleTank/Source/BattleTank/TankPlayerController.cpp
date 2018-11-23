@@ -41,7 +41,8 @@ void ATankPlayerController::AimTowardsCrosshair()
 	if (GetSightRayHitLocation(OutHitLocation)) /// Has "side-effect", it line traces
 	{
 		// Tell controlled tank to aim at this point
-		UE_LOG(LogTemp, Warning, TEXT("HIT CONFIRMED. HitLocation is: %s"), *OutHitLocation.ToString())
+		/// UE_LOG(LogTemp, Warning, TEXT("HIT CONFIRMED. HitLocation is: %s"), *OutHitLocation.ToString())
+		GetControlledTank()->AimAt(OutHitLocation);
 	}
 	return;
 }
@@ -60,6 +61,26 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	}
 	OutHitLocation = FVector(0);
 	return false;
+
+	// Alternative Method for Line-Tracing with GetHitResultAtScreenPosition()
+	/*bool bHit;
+	int32 ViewportSizeX, ViewportSizeY;
+	GetViewportSize(ViewportSizeX, ViewportSizeY);
+	FVector2D ScreenLocation = FVector2D(ViewportSizeX*CrossHairXLocation, ViewportSizeY*CrossHairYLocation);
+	bHit = GetWorld()->GetFirstPlayerController()->GetHitResultAtScreenPosition(
+		ScreenLocation,
+		ECollisionChannel::ECC_Visibility,
+		true,
+		Hit2D
+	);
+	if (bHit && Cast<ATank>(Hit2D.Actor) != GetControlledTank())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Location: %s | Targeting: %s"), *Hit2D.ImpactPoint.ToString(), *Hit2D.Actor->GetName())
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Location: NULL | Targeting: NOTHING"))
+	}*/
 }
 
 // Line-trace along CameraWorldDirection
@@ -69,6 +90,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector &CameraWorldDirecti
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner()); /// Setup query parameters
 	/// Ray-cast out to reach distance
 	FHitResult Hit;
+	FHitResult Hit2D;
 	/*GetWorld()->LineTraceSingleByObjectType(
 		Hit,
 		PlayerCameraManager->GetCameraLocation(), /// Returns the vectors of the first player controller, by modifying their memory address
