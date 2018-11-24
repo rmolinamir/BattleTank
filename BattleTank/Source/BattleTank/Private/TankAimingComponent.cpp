@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
+#include "TankBarrel.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -16,7 +17,7 @@ UTankAimingComponent::UTankAimingComponent()
 }
 
 
-void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent * BarrelToSet)
+void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
 {
 	Barrel = BarrelToSet;
 }
@@ -69,11 +70,13 @@ void UTankAimingComponent::BeginPlay()
 
 void UTankAimingComponent::MoveBarrel(FVector ProjectileDirection)
 {
-	// setup pivot point from which the barrel will rotate
-	// calculate the rotation of the barrel using the FVector then save it to a local variable
-	// broadcast variable to blueprint to animate rotation
-}
+	// Work-out difference between current barrel rotation, and AimDirection
+	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
+	auto AimAsRotator = ProjectileDirection.Rotation();
+	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
+	Barrel->Elevate(5.0f); // TODO remove magic number
+}
 
 // Called every frame
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
