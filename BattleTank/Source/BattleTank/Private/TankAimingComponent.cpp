@@ -13,25 +13,24 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true; // TODO Should this really tick?
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
 {
+	if (!BarrelToSet) { return;  }
 	Barrel = BarrelToSet;
 }
 
 void UTankAimingComponent::SetTurretReference(UTankTurret * TurretToSet)
 {
+	if (!TurretToSet) { return; }
 	Turret = TurretToSet;
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel || !Turret) { return; }
-
 	/*static bool SuggestProjectileVelocity
 	(
 		const UObject * WorldContextObject,
@@ -65,12 +64,12 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	if (bHaveAimSolution)
 	{
 		FVector ProjectileDirection = OutLaunchVelocity.GetSafeNormal();
-		UE_LOG(LogTemp, Warning, TEXT("Actor: %s | Firing at launch speed of: %f | Unit Direction: %s | Target location: %s"), *GetOwner()->GetName(), LaunchSpeed, *ProjectileDirection.ToString(), *HitLocation.ToString())
 		MoveBarrel(ProjectileDirection);
+		/// UE_LOG(LogTemp, Warning, TEXT("Actor: %s | Firing at launch speed of: %f | Unit Direction: %s | Target location: %s"), *GetOwner()->GetName(), LaunchSpeed, *ProjectileDirection.ToString(), *HitLocation.ToString())
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Actor: %s | no aim solution found!"), *GetOwner()->GetName())
+		/// UE_LOG(LogTemp, Warning, TEXT("Actor: %s | no aim solution found!"), *GetOwner()->GetName())
 	}
 }
 
@@ -78,9 +77,6 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
 void UTankAimingComponent::MoveBarrel(FVector ProjectileDirection)
@@ -98,16 +94,5 @@ void UTankAimingComponent::MoveBarrel(FVector ProjectileDirection)
 	else // Avoid going the long-way around
 	{
 		Turret->Rotate(-DeltaRotator.Yaw);
-
 	}
-
 }
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
