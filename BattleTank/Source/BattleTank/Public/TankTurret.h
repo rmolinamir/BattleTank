@@ -17,6 +17,6 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
-	float MaxYawRotationDegreesPerSecond = 90.0f; // Sensible default
+	float MaxYawRotationDegreesPerSecond = 45.0f; // Sensible default
 };
 

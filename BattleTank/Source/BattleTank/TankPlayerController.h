@@ -28,7 +28,7 @@ private:
 
 	ATank* GetControlledTank() const;
 
-	float Reach = 1000000.0f;
+	float Reach = 12500.0f;
 
 	bool GetSightRayHitLocation(FVector&) const;
 	bool GetLookVectorHitLocation(FVector &CameraWorldDirection, FVector & HitLocation) const;
