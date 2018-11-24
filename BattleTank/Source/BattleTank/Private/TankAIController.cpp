@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankAIController.h"
+#include "Tank.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "Map.h"
@@ -87,7 +88,7 @@ void ATankAIController::Tick(float DeltaTime)
 		}
 		if (Distance > 0 && ClosestActor != nullptr) // Protection against nullptr
 		{
-			/// UE_LOG(LogTemp, Warning, TEXT("%s's closest actor is %s nd the distance is equal to: %f"), *GetAIControlledTank()->GetName(), *ClosestActor->GetName(), Actors[ClosestActor])
+			/// UE_LOG(LogTemp, Warning, TEXT("%s's closest actor is %s nd the distance is equal to: %f"), *GetAIControlledTank()->GetName(), *Actor.Key->GetName(), Actor.Value)
 			GetAIControlledTank()->AimAt(ClosestActor->GetActorLocation());
 		}
 		return;

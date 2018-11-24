@@ -11,7 +11,7 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = true; // TODO Should this really tick?
 
 	// ...
 }
@@ -36,12 +36,14 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		bool bHighArc,
 		float CollisionRadius,
 		float OverrideGravityZ,
-		ESuggestProjVelocityTraceOption::Type TraceOption, /// OPTIONAL
+		ESuggestProjVelocityTraceOption::Type TraceOption, /// ::DoNotTrace to avoid BugTracing
 		const FCollisionResponseParams & ResponseParam, /// OPTIONAL
 		const TArray < AActor * > & ActorsToIgnore, /// OPTIONAL
-		bool bDrawDebug
+		bool bDrawDebug // OPTIONAL
 	)*/
 	FVector OutLaunchVelocity;
+	TArray < AActor * > ActorsToIgnore;
+	ActorsToIgnore.Add(GetOwner());
 	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity
 	(
 		this,
@@ -49,13 +51,20 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		Barrel->GetSocketLocation(FName("Projectile")),
 		HitLocation,
 		LaunchSpeed,
-		ESuggestProjVelocityTraceOption::DoNotTrace
+		false,
+		0.f,
+		0.f,
+		ESuggestProjVelocityTraceOption::DoNotTrace // Parameter must be present to prevent bug
 	);
 	if (bHaveAimSolution)
 	{
 		FVector ProjectileDirection = OutLaunchVelocity.GetSafeNormal();
-		UE_LOG(LogTemp, Warning, TEXT("Firing at launch speed of: %f | Unit Direction: %s | Target location: %s"), LaunchSpeed, *ProjectileDirection.ToString(), *HitLocation.ToString())
+		UE_LOG(LogTemp, Warning, TEXT("Actor: %s | Firing at launch speed of: %f | Unit Direction: %s | Target location: %s"), *GetOwner()->GetName(), LaunchSpeed, *ProjectileDirection.ToString(), *HitLocation.ToString())
 		MoveBarrel(ProjectileDirection);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Actor: %s | no aim solution found!"), *GetOwner()->GetName())
 	}
 }
 
