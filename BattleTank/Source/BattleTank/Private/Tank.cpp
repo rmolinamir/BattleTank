@@ -2,6 +2,11 @@
 
 #include "Tank.h"
 
+void ATank::SetBarrelReference(UStaticMeshComponent * BarrelToSet)
+{
+	TankAimingComponent->SetBarrelReference(BarrelToSet);
+}
+
 // Sets default values
 ATank::ATank()
 {
@@ -29,11 +34,10 @@ void ATank::Tick(float DeltaTime)
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	SetupPlayerInputComponent(PlayerInputComponent);
-
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 void ATank::AimAt(FVector HitLocation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s is aiming at: %s"), *GetName(), *HitLocation.ToString())
+	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }
