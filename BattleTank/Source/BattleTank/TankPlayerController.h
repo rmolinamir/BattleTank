@@ -21,9 +21,9 @@ public:
 
 private:
 	/// Pair of float specifying the pixel coordinates that will be used to de-project
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float CrossHairXLocation = .5;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float CrossHairYLocation = 0.3333;
 
 	ATank* GetControlledTank() const;
