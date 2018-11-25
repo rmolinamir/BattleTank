@@ -30,4 +30,7 @@ private:
 	bool GenerateSphereOverlapActors(TArray<AActor*>&) const;
 
 	void AimTowardsCrosshair();
+
+	ATank* Target = nullptr;
+
 };
