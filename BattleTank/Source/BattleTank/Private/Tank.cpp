@@ -50,8 +50,7 @@ void ATank::Fire() const
 		Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
 	);
 
-	//Projectile->LaunchProjectile(LaunchSpeed);
-	UE_LOG(LogTemp, Warning, TEXT("FIRE"))
+	Projectile->LaunchProjectile(LaunchSpeed);
 }
 
 void ATank::AimAt(FVector HitLocation)
