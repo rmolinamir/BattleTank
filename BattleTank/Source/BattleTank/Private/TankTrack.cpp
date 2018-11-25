@@ -5,8 +5,15 @@
 /**
 * TankTrack is used to set maximum driving force, and to apply forces to the tank.
 */
-void UTankTrack::SetThrottle(float Throttle)
+void UTankTrack::SetThrottle(float Throttle) // TODO clamp actual throttle value so player can't over-drive
 {
 	FString Name = GetName();
 	UE_LOG(LogTemp, Warning, TEXT("%s's throttle is: %f"), *Name, Throttle)
+	auto ForceApplied = GetForwardVector() * Throttle * TrackMaxDrivingForce;
+	auto ForceLocation = GetComponentLocation();
+	// Add Force at Tank Component (Which is the root component)
+	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->AddForceAtLocation(
+		ForceApplied,
+		ForceLocation
+	);
 }
