@@ -7,23 +7,6 @@
 #include "TankAimingComponent.h"
 #include "TankMovementComponent.h"
 
-void ATank::SetBarrelReference(UTankBarrel * BarrelToSet)
-{
-	Barrel = BarrelToSet;
-	TankAimingComponent->SetBarrelReference(BarrelToSet);
-}
-
-void ATank::SetTurretReference(UTankTurret * TurretToSet)
-{
-	TankAimingComponent->SetTurretReference(TurretToSet);
-}
-
-void ATank::SetTankMovementReference(UTankMovementComponent * TankMovementToSet)
-{
-	TankMovementComponent->SetTankMovementReference(TankMovementToSet);
-}
-
-
 // Sets default values
 ATank::ATank()
 {
@@ -32,7 +15,7 @@ ATank::ATank()
 
 	// No need to protect pointers as added at construction
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("AimingComponent"));
-	TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("TankMovementComponent	"));
+	/// TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("MovementComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -46,7 +29,24 @@ void ATank::BeginPlay()
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}	
+
+void ATank::SetBarrelReference(UTankBarrel * BarrelToSet)
+{
+	Barrel = BarrelToSet;
+	TankAimingComponent->SetBarrelReference(BarrelToSet);
 }
+
+void ATank::SetTurretReference(UTankTurret * TurretToSet)
+{
+	TankAimingComponent->SetTurretReference(TurretToSet);
+}
+
+//void ATank::SetTracksReferences(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
+//{
+//
+//	TankMovementComponent->Initialize(LeftTrackToSet, RightTrackToSet);
+//}
 
 void ATank::Fire() const
 {

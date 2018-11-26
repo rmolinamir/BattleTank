@@ -24,8 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetTurretReference(UTankTurret* TurretToSet);
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTankMovementReference(UTankMovementComponent* TankMovementToSet);
+	/*UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTracksReferences(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);*/
 
 	void AimAt(FVector HitLocation);
 
@@ -34,9 +34,8 @@ public:
 
 protected:
 	UTankAimingComponent* TankAimingComponent = nullptr;
-
-	UPROPERTY(BlueprintReadOnly)
-	UTankMovementComponent* TankMovementComponent = nullptr;
+	/// UPROPERTY(BlueprintReadOnly)
+	/// UTankMovementComponent* TankMovementComponent = nullptr;
 
 private:
 	// Sets default values for this pawn's properties
