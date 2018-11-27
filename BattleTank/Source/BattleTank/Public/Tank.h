@@ -18,24 +18,20 @@ class BATTLETANK_API ATank : public APawn
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetTurretReference(UTankTurret* TurretToSet);
-
-	/*UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTracksReferences(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);*/
 
 	void AimAt(FVector HitLocation);
 
-	UFUNCTION(BlueprintCallable, Category = Actions)
+	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void Fire() const;
 
 protected:
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
 	UTankAimingComponent* TankAimingComponent = nullptr;
-	/// UPROPERTY(BlueprintReadOnly)
-	/// UTankMovementComponent* TankMovementComponent = nullptr;
 
 private:
 	// Sets default values for this pawn's properties
@@ -46,18 +42,18 @@ private:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
-	float LaunchSpeed = 4500;
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	float LaunchSpeed = 10000;
 
 	// Local barrel reference for spawning projectiles
 	UTankBarrel* Barrel = nullptr;
 
 	float ReloadTimeInSeconds = 3;
 
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	mutable double LastFireTime = 0;
 
 };

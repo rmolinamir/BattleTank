@@ -52,7 +52,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) const
 {
 	// Find the crosshair position in pixel coordinates
-	int32 ViewportSizeX, ViewportSizeY;
+	/*int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
 	FVector2D ScreenLocation = FVector2D(ViewportSizeX*CrossHairXLocation, ViewportSizeY*CrossHairYLocation);
 	FVector CameraWorldDirection;
@@ -61,10 +61,11 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 		return GetLookVectorHitLocation(CameraWorldDirection, OutHitLocation);
 	}
 	OutHitLocation = FVector(0);
-	return false;
+	return false;*/
 
 	// Alternative Method for Line-Tracing with GetHitResultAtScreenPosition()
-	/*bool bHit;
+	bool bHit;
+	FHitResult Hit2D;
 	int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
 	FVector2D ScreenLocation = FVector2D(ViewportSizeX*CrossHairXLocation, ViewportSizeY*CrossHairYLocation);
@@ -76,12 +77,15 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	);
 	if (bHit && Cast<ATank>(Hit2D.Actor) != GetControlledTank())
 	{
+		OutHitLocation = Hit2D.ImpactPoint;
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s | Targeting: %s"), *Hit2D.ImpactPoint.ToString(), *Hit2D.Actor->GetName())
 	}
 	else
 	{
+		OutHitLocation = FVector(0);
 		UE_LOG(LogTemp, Warning, TEXT("Location: NULL | Targeting: NOTHING"))
-	}*/
+	}
+	return bHit;
 }
 
 // Line-trace along CameraWorldDirection
@@ -91,7 +95,6 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector &CameraWorldDirecti
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner()); /// Setup query parameters
 	/// Ray-cast out to reach distance
 	FHitResult Hit;
-	FHitResult Hit2D;
 	/*GetWorld()->LineTraceSingleByObjectType(
 		Hit,
 		PlayerCameraManager->GetCameraLocation(), /// Returns the vectors of the first player controller, by modifying their memory address

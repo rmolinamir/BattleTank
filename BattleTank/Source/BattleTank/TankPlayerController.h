@@ -19,17 +19,20 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	ATank* GetControlledTank() const;
+
 private:
 	/// Pair of float specifying the pixel coordinates that will be used to de-project
 	UPROPERTY(EditDefaultsOnly)
 	float CrossHairXLocation = .5;
+
 	UPROPERTY(EditDefaultsOnly)
 	float CrossHairYLocation = 0.3333;
 
-	ATank* GetControlledTank() const;
-
+	/// Aiming Logic local variables
 	float Reach = 12500.0f;
-
 	bool GetSightRayHitLocation(FVector&) const;
 	bool GetLookVectorHitLocation(FVector &CameraWorldDirection, FVector & HitLocation) const;
 	bool GetLookDirection(FVector2D &ScreenLocation, FVector &CameraWorldDirection) const;
