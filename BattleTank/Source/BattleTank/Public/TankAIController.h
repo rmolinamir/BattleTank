@@ -41,6 +41,6 @@ private:
 	float SphereRadius = 10000000.0f;
 
 	// How close can the AI tank get
-	float AcceptanceRadius = 1000.0f;
+	float AcceptanceRadius = 10.0f;
 
 };

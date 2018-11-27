@@ -42,7 +42,7 @@ void ATankAIController::Tick(float DeltaTime)
 	}
 	else if (Target.Value < FiringRange)
 	{
-		GetAIControlledTank()->Fire();
+		/// GetAIControlledTank()->Fire();
 	}
 	else
 	{
