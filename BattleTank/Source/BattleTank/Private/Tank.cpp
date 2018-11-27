@@ -13,52 +13,39 @@ ATank::ATank()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	// No need to protect pointers as added at construction
-	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("AimingComponent"));
 }
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
-// Called to bind functionality to input
-void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATank::SetTankAimingComponent(UTankAimingComponent* TankAimingComponentToSet)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}	
-
-void ATank::SetBarrelReference(UTankBarrel * BarrelToSet)
-{
-	Barrel = BarrelToSet;
-	TankAimingComponent->SetBarrelReference(BarrelToSet);
+	TankAimingComponent = TankAimingComponentToSet;
 }
 
-void ATank::SetTurretReference(UTankTurret * TurretToSet)
-{
-	TankAimingComponent->SetTurretReference(TurretToSet);
-}
-
-void ATank::Fire() const
-{
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	if (Barrel && isReloaded)
-	{
-		//// Spawn projectile at the socket location on the barrel
-		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
-			ProjectileBlueprint,
-			Barrel->GetSocketLocation(FName("Projectile")), // FVector Location
-			Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
-			);
-		Projectile->LaunchProjectile(LaunchSpeed);
-		LastFireTime = FPlatformTime::Seconds();
-	}
-}
+//void ATank::Fire() const
+//{
+//	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+//	if (Barrel && isReloaded)
+//	{
+//		//// Spawn projectile at the socket location on the barrel
+//		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+//			ProjectileBlueprint,
+//			Barrel->GetSocketLocation(FName("Projectile")), // FVector Location
+//			Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
+//			);
+//		Projectile->LaunchProjectile(LaunchSpeed);
+//		LastFireTime = FPlatformTime::Seconds();
+//	}
+//}
 
 void ATank::AimAt(FVector HitLocation)
 {
-	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
+	if (!TankAimingComponent) { return; }
+	TankAimingComponent->AimAt(HitLocation);
 
 }
