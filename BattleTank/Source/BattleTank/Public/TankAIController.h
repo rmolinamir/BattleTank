@@ -31,6 +31,16 @@ private:
 
 	void AimTowardsCrosshair();
 
-	ATank* Target = nullptr;
+	// TPair containing Closest Actor and Distance from tank
+	TPair<AActor *, float> Target;
+
+	// Firing Range
+	float FiringRange = 10000.0f;
+
+	// Radius of the sphere
+	float SphereRadius = 10000000.0f;
+
+	// How close can the AI tank get
+	float AcceptanceRadius = 1000.0f;
 
 };

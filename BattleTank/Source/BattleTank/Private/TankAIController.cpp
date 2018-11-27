@@ -34,14 +34,22 @@ void ATankAIController::BeginPlay()
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	AimTowardsCrosshair();
-
-	if (Target)
+	AimTowardsCrosshair(); // Constantly aim towards crosshair, which detects all actors in the map
+	if (!Target.Key) // If for some reason the sphere fails, move to the player
+	{
+		MoveToActor(GetPlayerTank(), AcceptanceRadius); // TODO check radius is in cm
+		GetAIControlledTank()->AimAt(GetPlayerTank()->GetActorLocation());
+	}
+	else if (Target.Value < FiringRange)
 	{
 		GetAIControlledTank()->Fire();
 	}
-	
+	else
+	{
+		MoveToActor(Target.Key, AcceptanceRadius); // TODO check radius is in cm
+	}
+	return;
+
 }
 
 // Generates a sphere around the AI controlled tank that detects all actors in it, returns array with overlapping actors and boolean status of the sphere
@@ -59,7 +67,7 @@ bool ATankAIController::GenerateSphereOverlapActors(TArray<AActor*> &OutOverlapp
 	bSphere = UKismetSystemLibrary::SphereOverlapActors(
 		GetWorld(), // World context
 		GetAIControlledTank()->GetActorLocation(), // Center of Sphere
-		10000.0f, // Radius
+		SphereRadius, // Radius
 		ObjectTypes,
 		nullptr,
 		IgnorePawn, // Ignore this actor
@@ -88,8 +96,7 @@ void ATankAIController::AimTowardsCrosshair()
 	TArray<AActor*> OutOverlappedActors; // OverlappedActors array returned from SphereOverlapActors
 	if (GenerateSphereOverlapActors(OutOverlappedActors))
 	{
-		TPair<const AActor *, float> Actor; // Actors TPair that will serve similarly to a hashtable to filter the nearest actor
-		AActor* ClosestActor = nullptr; // Nearest actor
+		TPair<AActor *, float> Actor; // Actors TPair that will serve similarly to a hashtable to filter the nearest actor
 		float Distance; // Distance (not the nearest distance)
 
 		for (const auto &OverlappedActor : OutOverlappedActors) // For every Actor inside the sphere
@@ -101,28 +108,20 @@ void ATankAIController::AimTowardsCrosshair()
 			{
 				Actor.Key = OverlappedActor; // Add new lowest distance
 				Actor.Value = Distance; // Add new lowest distance
-				ClosestActor = OverlappedActor; // Saves new actor in a variable for later use
 			}
 			else if (Distance < Actor.Value) // If the distance is lesser than the recorded lowest distance
 			{
-				/// Actors.Empty(); // Empty TMap
-				/// Actors.Add(OverlappedActor, Distance); // Add new lowest distance
 				Actor.Key = OverlappedActor; // Add new lowest distance
 				Actor.Value = Distance; // Add new lowest distance
-				ClosestActor = OverlappedActor; // Saves new actor in a variable for later use
 			}
 		}
-		if (Distance > 0 && ClosestActor != nullptr) // Protection against nullptr
-		{
-			/// UE_LOG(LogTemp, Warning, TEXT("%s's closest actor is %s nd the distance is equal to: %f"), *GetAIControlledTank()->GetName(), *Actor.Key->GetName(), Actor.Value)
-			GetAIControlledTank()->AimAt(ClosestActor->GetActorLocation());
-			Target = Cast<ATank>(ClosestActor);
-		}
-		return;
+		Target = Actor;
+		GetAIControlledTank()->AimAt(Target.Key->GetActorLocation());
 	}
 	else
 	{
-		Target = nullptr;
+		Target.Key = nullptr;
+		Target.Value = 0.0f;
 	}
 	return;
 }
