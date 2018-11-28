@@ -39,7 +39,10 @@ private:
 
 	virtual void BeginPlay() override;
 
-	/*UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	/*UFUNCTION(BluepreintCallable, Category = "Firing")
+	void Fire() const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")

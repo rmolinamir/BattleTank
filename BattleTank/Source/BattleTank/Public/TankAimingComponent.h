@@ -20,7 +20,9 @@ class UTankBarrel;
 class UTankTurret;
 class AProjectile;
 
-// Holds barrel's and turret's properties and methods
+/**
+* Holds barrel's and turret's properties and methods
+*/
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
@@ -37,7 +39,7 @@ protected:
 	virtual void BeginPlay() override;	
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
-	EFiringStatus FiringStatus = EFiringStatus::Reloading;
+	EFiringStatus FiringStatus = EFiringStatus::Aiming;
 
 private:
 	// Sets default values for this component's properties

@@ -11,7 +11,7 @@
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!GetAIControlledTank())
+	if (!ensure(GetAIControlledTank()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AITankController begin play not controller found"))
 	}
@@ -79,14 +79,14 @@ bool ATankAIController::GenerateSphereOverlapActors(TArray<AActor*> &OutOverlapp
 ATank* ATankAIController::GetAIControlledTank() const
 {
 	ATank* AIControlledTank = Cast<ATank>(GetPawn());
-	if (!AIControlledTank) { return nullptr; }
+	if (!ensure(AIControlledTank)) { return nullptr; }
 	return AIControlledTank;
 }
 
 ATank* ATankAIController::GetPlayerTank() const
 {
 	ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (!PlayerTank) { return nullptr; }
+	if (!ensure(PlayerTank)) { return nullptr; }
 	return PlayerTank;
 }
 

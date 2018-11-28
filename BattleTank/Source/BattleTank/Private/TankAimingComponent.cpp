@@ -16,11 +16,13 @@ UTankAimingComponent::UTankAimingComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
+
+
 }
 
 void UTankAimingComponent::Initialize(UTankBarrel * BarrelToSet, UTankTurret * TurretToSet)
 {
-	if (!BarrelToSet || !TurretToSet) { return;  }
+	if (!ensure(BarrelToSet && TurretToSet)) { return;  }
 	Barrel = BarrelToSet;
 	Turret = TurretToSet;
 
@@ -28,7 +30,7 @@ void UTankAimingComponent::Initialize(UTankBarrel * BarrelToSet, UTankTurret * T
 
 void UTankAimingComponent::AimAt(FVector HitLocation)
 {
-	if (!Barrel || !Turret) { return; }
+	if (!ensure(Barrel && Turret)) { return; }
 	/*static bool SuggestProjectileVelocity
 	(
 		const UObject * WorldContextObject,
@@ -77,7 +79,7 @@ void UTankAimingComponent::BeginPlay()
 
 void UTankAimingComponent::MoveBarrel(FVector ProjectileDirection)
 {
-	if (!Barrel || !Turret) { return; }
+	if (!ensure(Barrel && Turret)) { return; }
 	// Work-out difference between current barrel rotation, and AimDirection
 	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
 	FRotator AimAsRotator = ProjectileDirection.Rotation();
@@ -98,8 +100,9 @@ void UTankAimingComponent::MoveBarrel(FVector ProjectileDirection)
 
 void UTankAimingComponent::Fire() const
 {
+	if (!ensure(Barrel)) { return;  }
 	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	if (Barrel && isReloaded)
+	if (ensure(isReloaded))
 	{
 		//// Spawn projectile at the socket location on the barrel
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
@@ -107,6 +110,7 @@ void UTankAimingComponent::Fire() const
 			Barrel->GetSocketLocation(FName("Projectile")), // FVector Location
 			Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
 			);
+		if (!ensure(Projectile)) { return; }
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
 	}

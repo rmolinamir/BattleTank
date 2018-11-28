@@ -18,7 +18,7 @@ ATank::ATank()
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay(); // Needed for BP begin play event
 
 }
 
@@ -27,25 +27,26 @@ void ATank::SetTankAimingComponent(UTankAimingComponent* TankAimingComponentToSe
 	TankAimingComponent = TankAimingComponentToSet;
 }
 
-//void ATank::Fire() const
-//{
-//	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-//	if (Barrel && isReloaded)
-//	{
-//		//// Spawn projectile at the socket location on the barrel
-//		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
-//			ProjectileBlueprint,
-//			Barrel->GetSocketLocation(FName("Projectile")), // FVector Location
-//			Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
-//			);
-//		Projectile->LaunchProjectile(LaunchSpeed);
-//		LastFireTime = FPlatformTime::Seconds();
-//	}
-//}
+/*void ATank::Fire() const
+{
+	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+	if (Barrel && isReloaded)
+	{
+		/// Spawn projectile at the socket location on the barrel
+		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBlueprint,
+			Barrel->GetSocketLocation(FName("Projectile")), // FVector Location
+			Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
+		);
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = FPlatformTime::Seconds();
+	}
+
+}*/
 
 void ATank::AimAt(FVector HitLocation)
 {
-	if (!TankAimingComponent) { return; }
+	if (!ensure(TankAimingComponent)) { return; }
 	TankAimingComponent->AimAt(HitLocation);
 
 }
