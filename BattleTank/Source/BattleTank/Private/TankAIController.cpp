@@ -30,7 +30,7 @@ void ATankAIController::Tick(float DeltaTime)
 	}
 	else if (Target.Value < FiringRange)
 	{
-		TankAimingComponent()->Fire();
+		TankAimingComponent->Fire();
 	}
 	else
 	{
@@ -47,7 +47,6 @@ bool ATankAIController::GenerateSphereOverlapActors(TArray<AActor*> &OutOverlapp
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes; // ObjectTypes to restrict results to only static or only dynamic
 	TArray<AActor*> IgnorePawn; // Ignore this actor
 	IgnorePawn.Add(GetPawn());
-
 	/// ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic)); /// WorldDynamic is for Actor types that will be moving under the influence of animation or code; kinematic. Lifts and doors are good examples of WorldDynamic Actors.
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody)); /// Any Actor that will be moving due to the physics simulation.
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn)); /// Any player controlled entity should have the Pawn type. The player's character is a good example of an Actor that should receive the Pawn Object Type.
@@ -62,6 +61,7 @@ bool ATankAIController::GenerateSphereOverlapActors(TArray<AActor*> &OutOverlapp
 		OutOverlappedActors
 	);
 	return bSphere;
+
 }
 
 APawn* ATankAIController::GetAIControlledTank() const
@@ -69,6 +69,7 @@ APawn* ATankAIController::GetAIControlledTank() const
 	APawn* AIControlledTank = GetPawn();
 	if (!ensure(AIControlledTank)) { return nullptr; }
 	return AIControlledTank;
+
 }
 
 APawn* ATankAIController::GetPlayerTank() const
@@ -76,6 +77,7 @@ APawn* ATankAIController::GetPlayerTank() const
 	APawn* PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
 	if (!ensure(PlayerTank)) { return nullptr; }
 	return PlayerTank;
+
 }
 
 void ATankAIController::AimTowardsCrosshair()

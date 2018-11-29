@@ -101,7 +101,7 @@ void UTankAimingComponent::Fire() const
 {
 	if (!ensure(Barrel)) { return;  }
 	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	if (ensure(isReloaded))
+	if (isReloaded)
 	{
 		//// Spawn projectile at the socket location on the barrel
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
@@ -113,4 +113,5 @@ void UTankAimingComponent::Fire() const
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
 	}
+		
 }

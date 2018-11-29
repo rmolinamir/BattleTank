@@ -34,6 +34,10 @@ public:
 
 	void AimAt(FVector WorldSpace);
 
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	void Fire() const;
+	
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;	
@@ -54,9 +58,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
-
-	UFUNCTION(BlueprintCallable, Category = "Actions")
-	void Fire() const;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float LaunchSpeed = 10000;
