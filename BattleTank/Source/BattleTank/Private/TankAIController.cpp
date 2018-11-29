@@ -15,19 +15,6 @@ void ATankAIController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AITankController begin play not controller found"))
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AITankController begin play controlling pawn: %s"), *GetAIControlledTank()->GetName())
-	}
-
-	if (!GetPlayerTank())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerControlledTank at begin play not found"))
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerControlledTank at begin play controlling pawn: %s"), *GetPlayerTank()->GetName())
-	}
 }
 
 // Called every frame

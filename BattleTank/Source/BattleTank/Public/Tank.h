@@ -10,7 +10,6 @@
 class UTankBarrel;
 class UTankTurret;
 class UTankAimingComponent;
-class UTankMovementComponent;
 class AProjectile;
 
 UCLASS()
@@ -24,12 +23,6 @@ public:
 	void Fire() const;*/
 
 	void AimAt(FVector HitLocation);
-
-protected:
-
-	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void SetTankAimingComponent(UTankAimingComponent* TankAimingComponent);
-
 
 private:
 	// Sets default values for this pawn's properties

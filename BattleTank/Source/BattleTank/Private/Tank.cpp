@@ -5,7 +5,6 @@
 #include "Projectile.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
-#include "TankMovementComponent.h"
 
 // Sets default values
 ATank::ATank()
@@ -19,12 +18,8 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay(); // Needed for BP begin play event
+	TankAimingComponent = FindComponentByClass<UTankAimingComponent>();
 
-}
-
-void ATank::SetTankAimingComponent(UTankAimingComponent* TankAimingComponentToSet)
-{
-	TankAimingComponent = TankAimingComponentToSet;
 }
 
 /*void ATank::Fire() const
