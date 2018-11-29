@@ -28,6 +28,8 @@ protected:
 	void FoundAimingComponent(UTankAimingComponent* AimingComponentRef);
 
 private:
+	UTankAimingComponent* TankAimingComponent = nullptr;
+
 	/// Pair of float specifying the pixel coordinates that will be used to de-project
 	UPROPERTY(EditDefaultsOnly)
 	float CrossHairXLocation = .5;

@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankAIController.h"
-#include "Tank.h"
-#include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "TankAimingComponent.h"
+#include "GameFramework/Pawn.h"
+#include "Engine/World.h"
 #include "Map.h"
 #include "Vector.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -11,25 +12,25 @@
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!ensure(GetAIControlledTank()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AITankController begin play not controller found"))
-	}
+	if (!ensure(GetAIControlledTank())) { return; }
+	TankAimingComponent = GetAIControlledTank()->FindComponentByClass<UTankAimingComponent>();
+
 }
 
 // Called every frame
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (!ensure(GetPlayerTank() && GetAIControlledTank())) { return; }
 	AimTowardsCrosshair(); // Constantly aim towards crosshair, which detects all actors in the map
 	if (!Target.Key) // If for some reason the sphere fails, move to the player
 	{
 		MoveToActor(GetPlayerTank(), AcceptanceRadius); // TODO check radius is in cm
-		GetAIControlledTank()->AimAt(GetPlayerTank()->GetActorLocation());
+		TankAimingComponent->AimAt(GetPlayerTank()->GetActorLocation());
 	}
 	else if (Target.Value < FiringRange)
 	{
-		/// GetAIControlledTank()->Fire();
+		/// TankAimingComponent()->Fire();
 	}
 	else
 	{
@@ -63,23 +64,23 @@ bool ATankAIController::GenerateSphereOverlapActors(TArray<AActor*> &OutOverlapp
 	return bSphere;
 }
 
-ATank* ATankAIController::GetAIControlledTank() const
+APawn* ATankAIController::GetAIControlledTank() const
 {
-	ATank* AIControlledTank = Cast<ATank>(GetPawn());
+	APawn* AIControlledTank = GetPawn();
 	if (!ensure(AIControlledTank)) { return nullptr; }
 	return AIControlledTank;
 }
 
-ATank* ATankAIController::GetPlayerTank() const
+APawn* ATankAIController::GetPlayerTank() const
 {
-	ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	APawn* PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
 	if (!ensure(PlayerTank)) { return nullptr; }
 	return PlayerTank;
 }
 
 void ATankAIController::AimTowardsCrosshair()
 {
-	/// if (!GetPlayerTank()) { return; }
+	if (!ensure(GetPlayerTank() && GetAIControlledTank())) { return; }
 	TArray<AActor*> OutOverlappedActors; // OverlappedActors array returned from SphereOverlapActors
 	if (GenerateSphereOverlapActors(OutOverlappedActors))
 	{
@@ -103,7 +104,7 @@ void ATankAIController::AimTowardsCrosshair()
 			}
 		}
 		Target = Actor;
-		GetAIControlledTank()->AimAt(Target.Key->GetActorLocation());
+		TankAimingComponent->AimAt(Target.Key->GetActorLocation());
 	}
 	else
 	{

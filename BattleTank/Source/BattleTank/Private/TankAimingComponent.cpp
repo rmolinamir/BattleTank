@@ -16,14 +16,13 @@ UTankAimingComponent::UTankAimingComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-
-
 }
 
 void UTankAimingComponent::Initialize(UTankBarrel * BarrelToSet, UTankTurret * TurretToSet)
 {
 	if (!ensure(BarrelToSet && TurretToSet)) { return;  }
 	Barrel = BarrelToSet;
+	UE_LOG(LogTemp, Warning, TEXT("Barrel set and name is: %s"), *Barrel->GetName())
 	Turret = TurretToSet;
 
 }

@@ -7,7 +7,7 @@
 #include "TankAIController.generated.h"
 
 // Forward declarations
-class ATank;
+class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
@@ -20,15 +20,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	ATank* GetAIControlledTank() const;
+	UTankAimingComponent* TankAimingComponent = nullptr;
 
-	ATank* GetPlayerTank() const;
+	APawn* GetAIControlledTank() const;
 
-	// Start the tank moving the barrel so that a shot would hit
-	// where the crosshair intersects the world
+	APawn* GetPlayerTank() const;
 
 	bool GenerateSphereOverlapActors(TArray<AActor*>&) const;
 
+	// Start the tank moving the barrel so that a shot would hit
+	// where the crosshair intersects the world
 	void AimTowardsCrosshair();
 
 	// TPair containing Closest Actor and Distance from tank

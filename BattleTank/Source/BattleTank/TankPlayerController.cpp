@@ -9,24 +9,14 @@
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!ensure(GetControlledTank()))
+	if (!ensure(GetPawn())) { return; }
+	TankAimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	if (ensure(TankAimingComponent))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TankPlayerController begin play not controller found"))
+		// FoundAimintComponent() BlueprintImplementableEvent 
+		// to create BP ref and create aiming reticule widget UI
+		FoundAimingComponent(TankAimingComponent); 
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TankPlayerController begin play controlling pawn: %s"), *GetControlledTank()->GetName())
-	}
-	UTankAimingComponent* AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
-	if (ensure(AimingComponent))
-	{
-		FoundAimingComponent(AimingComponent);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player controller can't find aiming component at Begin Play"), *GetControlledTank()->GetName())
-	}
-
 }
 
 // Called every frame
@@ -51,8 +41,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 	if (GetSightRayHitLocation(OutHitLocation)) /// Has "side-effect", it line traces
 	{
 		// Tell controlled tank to aim at this point
-		/// UE_LOG(LogTemp, Warning, TEXT("HIT CONFIRMED. HitLocation is: %s"), *OutHitLocation.ToString())
-		GetControlledTank()->AimAt(OutHitLocation);
+		TankAimingComponent->AimAt(OutHitLocation);
 	}
 	return;
 }
@@ -87,12 +76,10 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	if (bHit && Cast<ATank>(Hit2D.Actor) != GetControlledTank())
 	{
 		OutHitLocation = Hit2D.ImpactPoint;
-		/// UE_LOG(LogTemp, Warning, TEXT("Location: %s | Targeting: %s"), *Hit2D.ImpactPoint.ToString(), *Hit2D.Actor->GetName())
 	}
 	else
 	{
 		OutHitLocation = FVector(0);
-		/// UE_LOG(LogTemp, Warning, TEXT("Location: NULL | Targeting: NOTHING"))
 	}
 	return bHit;
 }
