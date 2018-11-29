@@ -9,10 +9,3 @@ ATank::ATank()
 	PrimaryActorTick.bCanEverTick = false;
 
 }
-
-// Called when the game starts or when spawned
-void ATank::BeginPlay()
-{
-	Super::BeginPlay(); // Needed for BP begin play event
-
-}

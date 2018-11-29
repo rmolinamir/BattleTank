@@ -49,8 +49,9 @@ void ATankPlayerController::AimTowardsCrosshair()
 // Get world location through crosshair, true if it hits landscape
 bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) const
 {
+	/*
 	// Find the crosshair position in pixel coordinates
-	/*int32 ViewportSizeX, ViewportSizeY;
+	int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
 	FVector2D ScreenLocation = FVector2D(ViewportSizeX*CrossHairXLocation, ViewportSizeY*CrossHairYLocation);
 	FVector CameraWorldDirection;

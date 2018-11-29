@@ -30,7 +30,7 @@ void ATankAIController::Tick(float DeltaTime)
 	}
 	else if (Target.Value < FiringRange)
 	{
-		/// TankAimingComponent()->Fire();
+		TankAimingComponent()->Fire();
 	}
 	else
 	{
