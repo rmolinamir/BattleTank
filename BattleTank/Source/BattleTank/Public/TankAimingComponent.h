@@ -10,9 +10,10 @@
 UENUM()
 enum class EFiringStatus : uint8
 {
+	OutOfAmmo,
 	Reloading,
 	Aiming,
-	Locked
+	Locked,
 };
 
 // Forward Declaration
@@ -46,6 +47,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	EFiringStatus FiringStatus = EFiringStatus::Reloading;
 
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	int32 GetAmmo() const;
+
 private:
 	// Sets default values for this component's properties
 	UTankAimingComponent();
@@ -64,7 +68,7 @@ private:
 	FVector ProjectileDirection;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float IsBarrelAimingTolerance = 0.05f;
+	float IsBarrelAimingTolerance = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
@@ -75,4 +79,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	mutable double LastFireTime = 0;
 
+	mutable int32 Ammo = 10;
 };

@@ -22,7 +22,7 @@ public:
 protected:
 	// How close can the AI tank get
 	UPROPERTY(EditAnywhere, Category = "Setup")
-	float AcceptanceRadius = 1000.0f;
+	float AcceptanceRadius = 6000.0f;
 
 private:
 	UTankAimingComponent* TankAimingComponent = nullptr;
