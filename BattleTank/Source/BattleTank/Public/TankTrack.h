@@ -24,7 +24,11 @@ private:
 	// Sets default values for this component's properties
 	UTankTrack();
 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	float CurrentThrottle = 0.0f;
+
+	void ApplySidewayForce();
+
+	void DriveTrack();
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
