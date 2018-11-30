@@ -34,7 +34,7 @@ ATank* ATankPlayerController::GetControlledTank() const
 // Get World Location through crosshair
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!ensure(GetControlledTank())) { return; }
+	if (!GetControlledTank()) { return; }
 
 	FVector OutHitLocation; // Out parameter
 	// If it hits the landscape

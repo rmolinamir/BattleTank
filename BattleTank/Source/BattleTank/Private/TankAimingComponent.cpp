@@ -7,7 +7,16 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "UnrealMathUtility.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
+
+// Called when the game starts
+void UTankAimingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	LastFireTime = FPlatformTime::Seconds();
+
+}
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -15,7 +24,34 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, 
 	// and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
+
+	// Sets the ProjectileBlueprint equal to the Projectile_BP 
+	// blueprint file on editor due to bug in the engine
+	static ConstructorHelpers::FClassFinder<AProjectile> Projectile(TEXT("/Game/Tank/Projectile_BP"));
+	if (Projectile.Class)
+	{
+		ProjectileBlueprint = Projectile.Class;
+	}
+	
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds;
+	if (isReloaded)
+	{
+		FiringStatus = EFiringStatus::Reloading;
+	}
+	else if (IsBarrelMoving())
+	{
+		FiringStatus = EFiringStatus::Aiming;
+	}
+	else
+	{
+		FiringStatus = EFiringStatus::Locked;
+	}
 
 }
 
@@ -30,49 +66,27 @@ void UTankAimingComponent::Initialize(UTankBarrel * BarrelToSet, UTankTurret * T
 void UTankAimingComponent::AimAt(FVector HitLocation)
 {
 	if (!ensure(Barrel && Turret)) { return; }
-	/*static bool SuggestProjectileVelocity
-	(
-		const UObject * WorldContextObject,
-		FVector & TossVelocity,
-		FVector StartLocation,
-		FVector EndLocation,
-		float TossSpeed,
-		bool bHighArc,
-		float CollisionRadius,
-		float OverrideGravityZ,
-		ESuggestProjVelocityTraceOption::Type TraceOption, /// ::DoNotTrace to avoid BugTracing
-		const FCollisionResponseParams & ResponseParam, /// OPTIONAL
-		const TArray < AActor * > & ActorsToIgnore, /// OPTIONAL
-		bool bDrawDebug // OPTIONAL
-	)*/
 	FVector OutLaunchVelocity;
 	TArray < AActor * > ActorsToIgnore;
 	ActorsToIgnore.Add(GetOwner());
 	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity
 	(
-		this,
-		OutLaunchVelocity,
-		Barrel->GetSocketLocation(FName("Projectile")),
-		HitLocation,
-		LaunchSpeed,
-		false,
-		0.f,
-		0.f,
-		ESuggestProjVelocityTraceOption::DoNotTrace // Parameter must be present to prevent bug
+		this, /// const UObject * WorldContextObject,
+		OutLaunchVelocity, /// FVector & TossVelocity
+		Barrel->GetSocketLocation(FName("Projectile")), /// FVector StartLocation
+		HitLocation, /// FVector EndLocation
+		LaunchSpeed, /// float TossSpeed
+		false, /// bool bHighArc
+		0.f, /// float CollisionRadius
+		0.f, /// float OverrideGravityZ
+		ESuggestProjVelocityTraceOption::DoNotTrace // Parameter must be present to prevent bug 
 	);
 	if (bHaveAimSolution)
 	{
-		FVector ProjectileDirection = OutLaunchVelocity.GetSafeNormal();
+		ProjectileDirection = OutLaunchVelocity.GetSafeNormal(); /// FVector local variable
 		MoveBarrel(ProjectileDirection);
 	}
 	return;
-
-}
-
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
 
 }
 
@@ -97,21 +111,27 @@ void UTankAimingComponent::MoveBarrel(FVector ProjectileDirection)
 
 }
 
+bool UTankAimingComponent::IsBarrelMoving() const
+{
+	if (!ensure(Barrel && ProjectileBlueprint)) { return false; }
+	return !(Barrel->GetForwardVector().Equals(ProjectileDirection, IsBarrelAimingTolerance));
+}
+
 void UTankAimingComponent::Fire() const
 {
-	if (!ensure(Barrel)) { return;  }
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	if (isReloaded)
+
+	if (FiringStatus != EFiringStatus::Reloading)
 	{
+		if (!ensure(Barrel && ProjectileBlueprint)) { return; }
 		//// Spawn projectile at the socket location on the barrel
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
 			Barrel->GetSocketLocation(FName("Projectile")), // FVector Location
 			Barrel->GetSocketRotation(FName("Projectile")) // FRotator Rotation
 			);
-		if (!ensure(Projectile)) { return; }
+		if (!ensure(Projectile)) { return; }	
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
 	}
-		
+
 }
