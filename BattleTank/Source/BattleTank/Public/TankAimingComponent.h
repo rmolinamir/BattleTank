@@ -37,6 +37,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void Fire() const;
 	
+	EFiringStatus GetFiringStatus() const;
 
 protected:
 	// Called when the game starts
@@ -68,10 +69,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 	
-
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float LaunchSpeed = 10000;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	mutable double LastFireTime = 0;
+
 };

@@ -30,7 +30,10 @@ void ATankAIController::Tick(float DeltaTime)
 	}
 	else if (Target.Value < FiringRange)
 	{
-		TankAimingComponent->Fire();
+		if (TankAimingComponent->GetFiringStatus() == EFiringStatus::Locked)
+		{
+			TankAimingComponent->Fire();
+		}
 	}
 	else
 	{

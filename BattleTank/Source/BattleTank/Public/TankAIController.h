@@ -19,6 +19,11 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	// How close can the AI tank get
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float AcceptanceRadius = 1000.0f;
+
 private:
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
@@ -40,8 +45,5 @@ private:
 
 	// Radius of the sphere
 	float SphereRadius = 10000000.0f;
-
-	// How close can the AI tank get
-	float AcceptanceRadius = 10.0f;
 
 };

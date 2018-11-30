@@ -115,6 +115,7 @@ bool UTankAimingComponent::IsBarrelMoving() const
 {
 	if (!ensure(Barrel && ProjectileBlueprint)) { return false; }
 	return !(Barrel->GetForwardVector().Equals(ProjectileDirection, IsBarrelAimingTolerance));
+
 }
 
 void UTankAimingComponent::Fire() const
@@ -133,5 +134,11 @@ void UTankAimingComponent::Fire() const
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
 	}
+
+}
+
+EFiringStatus UTankAimingComponent::GetFiringStatus() const
+{
+	return FiringStatus;
 
 }
