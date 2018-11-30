@@ -25,7 +25,7 @@ void ATankAIController::Tick(float DeltaTime)
 	AimTowardsCrosshair(); // Constantly aim towards crosshair, which detects all actors in the map
 	if (!Target.Key) // If for some reason the sphere fails, move to the player
 	{
-		MoveToActor(GetPlayerTank(), AcceptanceRadius); // TODO check radius is in cm
+		MoveToActor(GetPlayerTank(), AcceptanceRadius);
 		TankAimingComponent->AimAt(GetPlayerTank()->GetActorLocation());
 	}
 	else if (Target.Value < FiringRange)
@@ -34,7 +34,7 @@ void ATankAIController::Tick(float DeltaTime)
 	}
 	else
 	{
-		MoveToActor(Target.Key, AcceptanceRadius); // TODO check radius is in cm
+		MoveToActor(Target.Key, AcceptanceRadius);
 	}
 	return;
 

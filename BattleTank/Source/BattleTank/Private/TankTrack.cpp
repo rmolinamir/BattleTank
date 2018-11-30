@@ -30,11 +30,14 @@ void UTankTrack::ApplySidewayForce()
 	if (!ensure(TankRoot)) { return; }
 	FVector CorrectionForce = (CorrectionAcceleration * TankRoot->GetMass() / 2); /// Divided by two because there are two tracks
 	TankRoot->AddForce(CorrectionForce);
+	return;
+
 }
 
-void UTankTrack::SetThrottle(float Throttle) // TODO clamp actual throttle value so player can't over-drive
+void UTankTrack::SetThrottle(float Throttle)
 {
-	CurrentThrottle = FMath::Clamp<float>(Throttle, -1, +1);
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, +1);
+	/// DriveTrack(); /// To turn
 
 }
 
@@ -47,6 +50,7 @@ void UTankTrack::DriveTrack()
 		ForceApplied,
 		ForceLocation
 	);
+	return;
 
 }
 
