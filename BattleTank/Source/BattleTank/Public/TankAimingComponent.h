@@ -59,8 +59,6 @@ private:
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
-	float ReloadTimeInSeconds = 3;
-
 	void MoveBarrel(FVector);
 
 	bool IsBarrelMoving() const;
@@ -79,5 +77,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	mutable double LastFireTime = 0;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	float ReloadTimeInSeconds = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	mutable int32 Ammo = 10;
 };

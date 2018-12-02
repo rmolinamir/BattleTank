@@ -28,7 +28,7 @@ UTankAimingComponent::UTankAimingComponent()
 
 	// Sets the ProjectileBlueprint equal to the Projectile_BP 
 	// blueprint file on editor due to bug in the engine
-	static ConstructorHelpers::FClassFinder<AProjectile> Projectile(TEXT("/Game/Tank/Projectile_BP"));
+	static ConstructorHelpers::FClassFinder<AProjectile> Projectile(TEXT("/Game/Projectile/Projectile_BP"));
 	if (Projectile.Class)
 	{
 		ProjectileBlueprint = Projectile.Class;
