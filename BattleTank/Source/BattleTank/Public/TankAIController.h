@@ -31,6 +31,8 @@ private:
 
 	APawn* GetPlayerTank() const;
 
+	virtual void SetPawn(APawn* InPawn) override;
+
 	bool GenerateSphereOverlapActors(TArray<AActor*>&) const;
 
 	// Start the tank moving the barrel so that a shot would hit
@@ -45,5 +47,9 @@ private:
 
 	// Radius of the sphere
 	float SphereRadius = 10000000.0f;
+
+	// OnDeath delegate method
+	UFUNCTION()
+	void OnPossesedTankDeath();
 
 };

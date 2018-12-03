@@ -8,6 +8,8 @@
 #include "Map.h"
 #include "Vector.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Tank.h" // So we can implement OnDeath.Broadcast()
+#include "../Public/TankAIController.h"
 
 void ATankAIController::BeginPlay()
 {
@@ -83,6 +85,18 @@ APawn* ATankAIController::GetPlayerTank() const
 
 }
 
+void ATankAIController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+		// Subscribe our local method to the tank's death event
+		PossessedTank->OnDeathDelegate.AddUniqueDynamic(this, &ATankAIController::OnPossesedTankDeath);
+	}
+}
+
 void ATankAIController::AimTowardsCrosshair()
 {
 	if (!ensure(GetPlayerTank() && GetAIControlledTank())) { return; }
@@ -117,4 +131,9 @@ void ATankAIController::AimTowardsCrosshair()
 		Target.Value = 0.0f;
 	}
 	return;
+}
+
+void ATankAIController::OnPossesedTankDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Death"))
 }

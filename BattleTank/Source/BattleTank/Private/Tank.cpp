@@ -12,7 +12,7 @@ ATank::ATank()
 
 float ATank::GetHealthPercent() const
 {
-	return CurrentHealth/StartingHealth;
+	return (float)CurrentHealth / (float)StartingHealth;
 }
 
 float ATank::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
@@ -24,7 +24,7 @@ float ATank::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 	float DamageToApply = FMath::Clamp(DamagePoints, 0, CurrentHealth);
 	CurrentHealth -= DamageToApply;
 	if (CurrentHealth <= 0) {
-		UE_LOG(LogTemp, Warning, TEXT("The tank %s has died!"), *GetName())
+		OnDeathDelegate.Broadcast();
 	}
 	return DamageToApply;
 
