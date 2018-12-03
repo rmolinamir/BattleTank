@@ -3,6 +3,8 @@
 #include "Projectile.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "PhysicsEngine/RadialForceComponent.h"
+#include "Public/TimerManager.h"
 #include "ProjectileComponent.h"
 
 /**
@@ -31,6 +33,9 @@ AProjectile::AProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileComponent>(FName("Projectile Movement"));
 	ProjectileMovement->bAutoActivate = false;
 
+	ExplosionForce = CreateDefaultSubobject<URadialForceComponent>(FName("Explosion Force"));
+	ExplosionForce->SetupAttachment(RootComponent);
+
 }
 
 // Called when the game starts or when spawned
@@ -52,6 +57,19 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 {
 	ImpactBlast->Activate();
 	LaunchBlast->Deactivate();
-	UE_LOG(LogTemp, Warning, TEXT("HIT"))
+	ExplosionForce->FireImpulse();
+	SetRootComponent(ImpactBlast);
+	CollisionMesh->DestroyComponent();
+	FTimerHandle TimerHandle;
+	//With Lambda Expression
+	/*GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
+		Destroy();
+	}, DestroyDelay, true);*/
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectile::OnTimerExpire, DestroyDelay, false);
 
+}
+
+void AProjectile::OnTimerExpire()
+{
+	Destroy();
 }

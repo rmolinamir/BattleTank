@@ -8,6 +8,7 @@
 
 // Forwarded Declarations
 class UProjectileComponent;
+class URadialForceComponent;
 
 UCLASS()
 class BATTLETANK_API AProjectile : public AActor
@@ -28,6 +29,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UStaticMeshComponent* CollisionMesh = nullptr;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	URadialForceComponent* ExplosionForce = nullptr;
+
 	UPROPERTY(VisibleAnywhere, Category = "Particles")
 	UParticleSystemComponent* LaunchBlast = nullptr;
 
@@ -40,4 +44,8 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float DestroyDelay = 10.0f;
+
+	void OnTimerExpire();
 };

@@ -78,8 +78,8 @@ private:
 	mutable double LastFireTime = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float ReloadTimeInSeconds = 3;
+	float ReloadTimeInSeconds = 2;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	mutable int32 Ammo = 10;
+	mutable int32 Ammo = 20;
 };
