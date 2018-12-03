@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankTrack.h"
+#include "UObject/ConstructorHelpers.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "GameFramework/Actor.h"
 
 /**
@@ -10,12 +12,30 @@
 // Sets default values for this component's properties
 UTankTrack::UTankTrack()
 {
-	// Set this component to be initialized when the game starts, 
-	// and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	bWantsInitializeComponent = true;
 	PrimaryComponentTick.bCanEverTick = false;
 	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit); /// First step to add OnHit events
+	this->SetNotifyRigidBodyCollision(true); // To set Simulate Hit Events true by default on the Blueprint
+	// Finds the static mesh to be set
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh(TEXT("StaticMesh'/Game/Tank/tank_fbx_Track.tank_fbx_Track'"));
+	// If there is a find, it sets the static mesh
+	if (StaticMesh.Object) {
+		this->SetStaticMesh(StaticMesh.Object);
+	}
+	//// Finds the physical material to be set
+	static ConstructorHelpers::FObjectFinder<UPhysicalMaterial> PhysicalMaterial(TEXT("PhysicalMaterial'/Game/Tank/Track.Track'"));
+	PhysicalMaterialObj = PhysicalMaterial.Object;	
+}
 
+void UTankTrack::InitializeComponent()
+{
+	Super::InitializeComponent();
+	// If there is a find, it sets the physical material
+	UE_LOG(LogTemp, Warning, TEXT("OnInitializeComponent"))
+	if (PhysicalMaterialObj) {
+			UE_LOG(LogTemp, Warning, TEXT("FoundMaterial"))
+			this->SetPhysMaterialOverride(reinterpret_cast<UPhysicalMaterial*>(PhysicalMaterialObj));
+	}
 }
 
 void UTankTrack::ApplySidewayForce()

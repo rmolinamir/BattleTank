@@ -66,7 +66,7 @@ private:
 	FVector ProjectileDirection;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float IsBarrelAimingTolerance = 0.1f;
+	float IsBarrelAimingTolerance = 0.075f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
@@ -82,4 +82,5 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	mutable int32 Ammo = 20;
+
 };
