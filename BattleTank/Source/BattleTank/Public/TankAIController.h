@@ -31,7 +31,7 @@ private:
 
 	APawn* GetPlayerTank() const;
 
-	virtual void SetPawn(APawn* InPawn) override;
+	virtual void SetPawn(APawn* InPawn) override; /// OnDeathDelegate subscription set here
 
 	bool GenerateSphereOverlapActors(TArray<AActor*>&) const;
 

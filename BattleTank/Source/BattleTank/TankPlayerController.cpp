@@ -31,6 +31,23 @@ ATank* ATankPlayerController::GetControlledTank() const
 	return Cast<ATank>(GetPawn());
 }
 
+/**
+* Here we will subscribe to the OnDeathDelegate broadcast and listen to the event. We will register the
+* OnPosssedTankDeath helper function that will run after the event triggers.
+*/
+void ATankPlayerController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+		// Subscribe our local method to the tank's death event
+		PossessedTank->OnDeathDelegate.AddUniqueDynamic(this, &ATankPlayerController::OnPossesedTankDeath);
+	}
+
+}
+
 // Get World Location through crosshair
 void ATankPlayerController::AimTowardsCrosshair()
 {
@@ -103,7 +120,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector &CameraWorldDirecti
 		Hit,
 		PlayerCameraManager->GetCameraLocation(), /// Returns the vectors of the first player controller, by modifying their memory address
 		PlayerCameraManager->GetCameraLocation() + CameraWorldDirection * Reach,
-		ECollisionChannel::ECC_Visibility
+		ECollisionChannel::ECC_Camera
 	);
 	OutHitLocation = Hit.Location;
 	if (Hit.IsValidBlockingHit() && Cast<ATank>(Hit.Actor) != GetControlledTank())
@@ -124,4 +141,12 @@ bool ATankPlayerController::GetLookDirection(FVector2D &ScreenLocation, FVector 
 		CameraWorldLocation,
 		CameraWorldDirection
 	);
+
+}
+
+void ATankPlayerController::OnPossesedTankDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Death"))
+	StartSpectatingOnly();
+
 }

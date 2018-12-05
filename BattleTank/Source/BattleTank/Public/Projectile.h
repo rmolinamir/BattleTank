@@ -43,6 +43,9 @@ private:
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void OnAActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float DestroyDelay = 2.5f;

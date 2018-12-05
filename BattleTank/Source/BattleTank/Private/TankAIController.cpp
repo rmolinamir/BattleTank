@@ -85,6 +85,10 @@ APawn* ATankAIController::GetPlayerTank() const
 
 }
 
+/**
+* Here we will subscribe to the OnDeathDelegate broadcast and listen to the event. We will register the
+* OnPosssedTankDeath helper function that will run after the event triggers.
+*/
 void ATankAIController::SetPawn(APawn * InPawn)
 {
 	Super::SetPawn(InPawn);
@@ -95,6 +99,7 @@ void ATankAIController::SetPawn(APawn * InPawn)
 		// Subscribe our local method to the tank's death event
 		PossessedTank->OnDeathDelegate.AddUniqueDynamic(this, &ATankAIController::OnPossesedTankDeath);
 	}
+
 }
 
 void ATankAIController::AimTowardsCrosshair()
@@ -131,9 +136,14 @@ void ATankAIController::AimTowardsCrosshair()
 		Target.Value = 0.0f;
 	}
 	return;
+
 }
 
 void ATankAIController::OnPossesedTankDeath()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Death"))
+	/// DetachFromControllerPendingDestroy();
+	if (!ensure(GetPawn())) { return; } // TODO remove ensure
+	GetPawn()->DetachFromControllerPendingDestroy();
+
 }

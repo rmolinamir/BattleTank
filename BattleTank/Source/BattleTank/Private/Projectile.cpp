@@ -45,6 +45,7 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	CollisionMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);  /// First step to add OnHit events
+	/// OnActorHit.AddDynamic(this, &AProjectile::OnAActorHit); /// First step to add OnHit events, based on AActor!
 
 }
 
@@ -77,6 +78,12 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	}, DestroyDelay, true);*/
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectile::OnTimerExpire, DestroyDelay, false);
 
+}
+
+void AProjectile::OnAActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[Inside OnAActorHit]: Hit Recorded"))
+	// Do nothing
 }
 
 void AProjectile::OnTimerExpire()

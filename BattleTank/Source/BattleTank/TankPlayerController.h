@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Tank.h" // So we can implement OnDeath.Broadcast()
 #include "TankPlayerController.generated.h" /// Must be the last include
 
 // Forward declarations
@@ -30,6 +31,8 @@ protected:
 private:
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
+	virtual void SetPawn(APawn* InPawn) override; /// OnDeathDelegate subscription set here
+
 	/// Pair of float specifying the pixel coordinates that will be used to de-project
 	UPROPERTY(EditDefaultsOnly)
 	float CrossHairXLocation = .5;
@@ -43,4 +46,9 @@ private:
 	bool GetLookVectorHitLocation(FVector &CameraWorldDirection, FVector & HitLocation) const;
 	bool GetLookDirection(FVector2D &ScreenLocation, FVector &CameraWorldDirection) const;
 	void AimTowardsCrosshair();
+
+	// OnDeath delegate method
+	UFUNCTION()
+	void OnPossesedTankDeath();
+
 };

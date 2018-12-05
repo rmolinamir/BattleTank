@@ -27,13 +27,19 @@ protected:
 	// Called by the engine when tank takes damage
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setup")
+	int32 StartingHealth = 100.0f; // Default value of 100.0f
+
 private:
 	// Sets default values for this pawn's properties
 	ATank();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	int32 StartingHealth = 100.0f;
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void SetCurrentHealth(int32 Health);
+		
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay Statistics")
-	int32 CurrentHealth = StartingHealth;
+	int32 CurrentHealth;
 
 };

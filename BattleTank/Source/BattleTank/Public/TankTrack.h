@@ -24,7 +24,7 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void InitializeComponent() override;
+	virtual void OnCreatePhysicsState() override;
 
 private:
 	// Sets default values for this component's properties
