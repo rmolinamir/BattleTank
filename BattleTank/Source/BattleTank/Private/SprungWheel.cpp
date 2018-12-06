@@ -2,7 +2,7 @@
 
 #include "SprungWheel.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/SphereComponent.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Components/SceneComponent.h"
 
@@ -11,7 +11,6 @@ ASprungWheel::ASprungWheel()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 
 	// No need to protect points as added at construction
 	Spring = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("Spring"));
@@ -36,13 +35,22 @@ ASprungWheel::ASprungWheel()
 	Spring->SetLinearDriveParams(5000, 2000, 0);
 	// End physics parameters
 
+	Axle = CreateDefaultSubobject<USphereComponent>(FName("Axle"));
+	Axle->SetupAttachment(Spring);
+
 	// No need to protect points as added at construction
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> WheelStaticMesh(TEXT("/Game/Tank/SprungWheel_SM.SprungWheel_SM"));
-	Wheel = CreateDefaultSubobject<UStaticMeshComponent>(FName("Wheel"));
-	Wheel->SetupAttachment(Spring);
-	if (WheelStaticMesh.Object) {
+	AxleWheelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("AxleWheelConstraint"));
+	// Setting up root component
+	AxleWheelConstraint->SetupAttachment(Axle);
+
+	/// No need to protect points as added at construction
+	/// static ConstructorHelpers::FObjectFinder<UStaticMesh> WheelStaticMesh(TEXT("/Game/Tank/SprungWheel_SM.SprungWheel_SM"));
+	Wheel1 = CreateDefaultSubobject<USphereComponent>(FName("Wheel"));
+	Wheel1->SetupAttachment(Axle);
+	/*if (WheelStaticMesh.Object) {
 		Wheel->SetStaticMesh(WheelStaticMesh.Object);
-	}
+	}*/
+	
 
 }
 
@@ -68,7 +76,14 @@ void ASprungWheel::SetupConstraint(bool &retflag)
 	Spring->SetConstrainedComponents(
 		BodyRoot,
 		NAME_None,
-		Wheel,
+		Axle,
+		NAME_None
+	);
+	if (!AxleWheelConstraint) { return; }
+	AxleWheelConstraint->SetConstrainedComponents(
+		Axle,
+		NAME_None,
+		Wheel1,
 		NAME_None
 	);
 	retflag = false;
