@@ -7,6 +7,7 @@
 #include "TankTrack.generated.h"
 
 // Forwarded declarations
+class ASprungWheel;
 
 UCLASS(ClassGroup = (Rendering, Common), meta = (BlueprintSpawnableComponent)) /// , hidecategories = ("Collision"))
 class BATTLETANK_API UTankTrack : public UStaticMeshComponent
@@ -20,25 +21,25 @@ public:
 
 	// Max force per track, in Newtons
 	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce = 40000000.0; // Assume 40ton tank, and 1g acceleration	void SetThrottle(float Throttle);
+	float TrackMaxDrivingForce = 40000000.0; // Assume 40ton tank, and 1g acceleration
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void OnCreatePhysicsState() override;
+	/// Called when the game starts or when spawned
+	/// virtual void OnCreatePhysicsState() override;
 
 private:
 	// Sets default values for this component's properties
 	UTankTrack();
 
-	float CurrentThrottle = 0.0f;
+	/// void ApplySidewayForce();
 
-	void ApplySidewayForce();
+	void DriveTrack(float CurrentThrottle);
 
-	void DriveTrack();
+	/// UPhysicalMaterial* PhysicalMaterialObj = nullptr;
 
-	UPhysicalMaterial* PhysicalMaterialObj = nullptr;
+	/// UFUNCTION(BlueprintCallable, Category = "Setup")
+	/// void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	TArray<ASprungWheel*> GetWheels() const;
 
 };

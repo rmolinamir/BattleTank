@@ -11,7 +11,7 @@ USpawnPoint::USpawnPoint()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 }
 
@@ -21,16 +21,16 @@ void USpawnPoint::BeginPlay()
 	Super::BeginPlay();
 	/// Actor* NewActor = GetWorld()->SpawnActor<AActor>(SpawnClass);
 	FTransform const Transform = GetComponentTransform();
-	AActor* NewActor = GetWorld()->SpawnActorDeferred<AActor>(
+	SpawnPoint = GetWorld()->SpawnActorDeferred<AActor>(
 		SpawnClass,
 		Transform
 		/*GetOwner(),
 		GetOwner()->Instigator,
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding*/
 	);
-	if (!NewActor) { return; }
-	NewActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
-	UGameplayStatics::FinishSpawningActor(NewActor, Transform);
+	if (!SpawnPoint) { return; }
+	SpawnPoint->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+	UGameplayStatics::FinishSpawningActor(SpawnPoint, Transform);
 
 }
 
@@ -40,6 +40,11 @@ void USpawnPoint::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+}
+
+AActor* USpawnPoint::GetSpawnPoint() const
+{
+	return SpawnPoint;
+
 }
 

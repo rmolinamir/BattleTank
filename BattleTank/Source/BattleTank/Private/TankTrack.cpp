@@ -4,6 +4,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "GameFramework/Actor.h"
+#include "SprungWheel.h" // To Add Driving Force
+#include "SpawnPoint.h" // For GetWheels()
 
 /**
 * TankTrack is used to set maximum driving force, and to apply forces to the tank.
@@ -13,21 +15,21 @@
 UTankTrack::UTankTrack()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit); /// First step to add OnHit events
-	this->SetNotifyRigidBodyCollision(true); // To set Simulate Hit Events true by default on the Blueprint
+	/// OnComponentHit.AddDynamic(this, &UTankTrack::OnHit); /// First step to add OnHit events
+	/// this->SetNotifyRigidBodyCollision(true); // To set Simulate Hit Events true by default on the Blueprint
 	// Finds the static mesh to be set
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh(TEXT("StaticMesh'/Game/Tank/tank_fbx_Track.tank_fbx_Track'"));
 	// If there is a find, it sets the static mesh
 	if (StaticMesh.Object) {
 		this->SetStaticMesh(StaticMesh.Object);
 	}
-	// Finds the physical material to be set OnCreatePhysicsState()
-	static ConstructorHelpers::FObjectFinder<UPhysicalMaterial> PhysicalMaterial(TEXT("/Game/Tank/Track.Track"));
-	PhysicalMaterialObj = PhysicalMaterial.Object;	
+	/// Finds the physical material to be set OnCreatePhysicsState()
+	/*static ConstructorHelpers::FObjectFinder<UPhysicalMaterial> PhysicalMaterial(TEXT("/Game/Tank/Track.Track"));
+	PhysicalMaterialObj = PhysicalMaterial.Object;*/
 
 }
 
-void UTankTrack::OnCreatePhysicsState()
+/*void UTankTrack::OnCreatePhysicsState()
 {
 	Super::OnCreatePhysicsState();
 	// If there is a find, it sets the physical material
@@ -37,9 +39,9 @@ void UTankTrack::OnCreatePhysicsState()
 	}
 	return;
 	
-}
+}*/
 
-void UTankTrack::ApplySidewayForce()
+/*void UTankTrack::ApplySidewayForce()
 {
 	// Calculate slippage speed and get delta time seconds
 	float SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
@@ -53,32 +55,58 @@ void UTankTrack::ApplySidewayForce()
 	TankRoot->AddForce(CorrectionForce);
 	return;
 
-}
+}*/
 
 void UTankTrack::SetThrottle(float Throttle)
 {
-	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, +1);
-	/// DriveTrack(); /// To turn
+	float CurrentThrottle = FMath::Clamp<float>(Throttle, -1, +1);
+	DriveTrack(CurrentThrottle);
 
 }
 
-void UTankTrack::DriveTrack()
+void UTankTrack::DriveTrack(float CurrentThrottle)
 {
-	FVector ForceApplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
-	FVector ForceLocation = GetComponentLocation();
-	// Add Force at Tank Component (Which is the root component)
-	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->AddForceAtLocation(
-		ForceApplied,
-		ForceLocation
-	);
+	float ForceApplied = CurrentThrottle * TrackMaxDrivingForce;
+	auto Wheels = GetWheels();
+	float ForcePerWheel = ForceApplied / Wheels.Num();
+	for (ASprungWheel* Wheel : Wheels)
+	{
+		if (!ensure(Wheel)) { continue; }
+		Wheel->AddDrivingForce(ForcePerWheel);
+	}
 	return;
 
 }
 
-void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+TArray<ASprungWheel*> UTankTrack::GetWheels() const
 {
-	DriveTrack();
-	ApplySidewayForce();
-	CurrentThrottle = 0;
+	TArray<ASprungWheel*> SprungWheels;
+	TArray <USceneComponent*> SpawnPoints;
+	this->GetChildrenComponents(true, SpawnPoints);
+	for (USceneComponent* SpawnPoint : SpawnPoints)
+	{
+
+		/*ASprungWheel* SprungWheel = Cast<ASprungWheel>(Cast<USpawnPoint>(SpawnPoint)->GetSpawnPoint());
+		if (!SprungWheel) { continue; }
+		UE_LOG(LogTemp, Warning, TEXT("SPAWNPOINT FOUND"))
+		SprungWheels.Add(SprungWheel);*/
+		auto SpawnPointChild = Cast<USpawnPoint>(SpawnPoint);
+		if (!SpawnPointChild) { continue;  }
+
+		AActor* SpawnedChild = SpawnPointChild->GetSpawnPoint();
+		auto SprungWheel = Cast<ASprungWheel>(SpawnedChild);
+		if (!SprungWheel) { continue; }
+
+		SprungWheels.Add(SprungWheel);
+	}
+	return SprungWheels;
 
 }
+
+//void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+//{
+//	DriveTrack();
+//	ApplySidewayForce();
+//	CurrentThrottle = 0;
+//
+//}

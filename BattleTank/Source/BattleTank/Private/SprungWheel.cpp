@@ -65,6 +65,11 @@ void ASprungWheel::BeginPlay()
 
 }
 
+void ASprungWheel::AddDrivingForce(float ForceMagnitude)
+{
+	Wheel1->AddForce(Axle->GetForwardVector() * ForceMagnitude);
+}
+
 void ASprungWheel::SetupConstraint(bool &retflag)
 {
 	retflag = true;
