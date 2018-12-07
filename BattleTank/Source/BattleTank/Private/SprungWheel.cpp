@@ -5,12 +5,14 @@
 #include "Components/SphereComponent.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Components/SceneComponent.h"
+#include "GameFramework/Controller.h"
 
 // Sets default values
 ASprungWheel::ASprungWheel()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.TickGroup = TG_PostPhysics;
 
 	// No need to protect points as added at construction
 	Spring = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("Spring"));
@@ -32,7 +34,7 @@ ASprungWheel::ASprungWheel()
 	Spring->SetLinearVelocityTarget(FVector(0, 0, 0));
 	Spring->SetLinearVelocityDrive(false, false, true);
 
-	Spring->SetLinearDriveParams(5000, 2000, 0);
+	Spring->SetLinearDriveParams(500, 200, 0);
 	// End physics parameters
 
 	Axle = CreateDefaultSubobject<USphereComponent>(FName("Axle"));
@@ -62,12 +64,27 @@ void ASprungWheel::BeginPlay()
 	bool retflag;
 	SetupConstraint(retflag);
 	if (retflag) return;
+	// Activate collision
+	Wheel1->SetNotifyRigidBodyCollision(true);
+	Wheel1->OnComponentHit.AddDynamic(this, &ASprungWheel::OnHit);
+
+}
+
+// Called every frame
+void ASprungWheel::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (GetWorld()->TickGroup == TG_PostPhysics)
+	{
+		// Canceling the force
+		TotalForceMagnitude = 0;
+	}
 
 }
 
 void ASprungWheel::AddDrivingForce(float ForceMagnitude)
 {
-	Wheel1->AddForce(Axle->GetForwardVector() * ForceMagnitude);
+	TotalForceMagnitude += ForceMagnitude;
 }
 
 void ASprungWheel::SetupConstraint(bool &retflag)
@@ -94,10 +111,15 @@ void ASprungWheel::SetupConstraint(bool &retflag)
 	retflag = false;
 }
 
-// Called every frame
-void ASprungWheel::Tick(float DeltaTime)
+void ASprungWheel::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	Super::Tick(DeltaTime);
+	if (!(Hit.GetActor())) { return;  }
+	Wheel1->AddForce(Axle->GetForwardVector() * TotalForceMagnitude);
 
 }
 
+//void ASprungWheel::SetNumberOfWheels(int32 NumberOfWheels)
+//{
+//	this->NumberOfWheels = NumberOfWheels;
+//
+//}

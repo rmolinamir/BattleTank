@@ -21,6 +21,8 @@ public:
 
 	void AddDrivingForce(float ForceMagnitude);
 
+	//void SetNumberOfWheels(int32 NumberOfWheels);
+
 protected:
 	void SetupConstraint(bool &retflag);
 
@@ -43,4 +45,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Physical Constraint")
 	UPhysicsConstraintComponent* Spring = nullptr;
 	
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	float TotalForceMagnitude = 0.0f;
+
+	//int32 NumberOfWheels;
 };

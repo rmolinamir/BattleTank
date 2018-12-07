@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tank.h"
+//#include "SprungWheel.h"
 
 // Sets default values
 ATank::ATank()
@@ -15,6 +16,13 @@ void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentHealth = StartingHealth;
+	/*TArray<AActor*> SprungWheels;
+	GetAttachedActors(SprungWheels);
+	for (AActor* SprungWheel : SprungWheels)
+	{
+		if (!SprungWheel) { return;  }
+		Cast<ASprungWheel>(SprungWheel)->SetNumberOfWheels(SprungWheels.Num());
+	}*/
 }
 
 void ATank::SetCurrentHealth(int32 Health)
